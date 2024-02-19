@@ -40,12 +40,6 @@ class UserController extends Controller
             ]);
         }
 
-        // $file = $request->file('file');
-        // $fileName = time() . '_' . $file->getClientOriginalName();
-        // $filePath = public_path('uploads/users/'); // 'uploads' is the directory inside the public path
-
-        // $file->move($filePath, $fileName);
-
         $fileName = '';
         if ($request->hasFile('pic')) {
             $destinationPath = public_path() . '/user/profile_picture/';
