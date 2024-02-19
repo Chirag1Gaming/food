@@ -137,7 +137,7 @@ class UserController extends Controller
 
         // $user->assignRole($request->input('roles'));
 
-        return redirect()->route('users.index')
+        return redirect()->route('get_user_list')
         ->with('success', 'User updated successfully');
     }
 
@@ -150,7 +150,7 @@ class UserController extends Controller
     public function destroy($id): RedirectResponse
     {
         User::find($id)->delete();
-        return redirect()->route('users.index')
+        return redirect()->route('get_user_list')
         ->with('success', 'User deleted successfully');
     }
 }
