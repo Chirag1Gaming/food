@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Food;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -158,13 +159,32 @@ class UserController extends Controller
         $food_request_count = Food::where('type', 'request')->count();
         $food_donate_count = Food::where('type', 'donate')->count();
         $food_accepted_count = Food::where('accept_id', '!=', null)->count();
-        $food_records = Food::limit('3');
+        $food_records = Food::limit('3')->get();
+
+        $year = date('Y');
+
+        // Generate an array of all months in the year
+        $months = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $months[] = $month;
+        }
+
+        $userCounts = DB::table(DB::raw('(SELECT ' . implode(' as month UNION ALL SELECT ', $months) . ' as month) months'))
+            ->leftJoin('users', function ($join) use ($year) {
+                $join->on(DB::raw('MONTH(users.created_at)'), '=', 'months.month')
+                    ->whereYear('users.created_at', $year);
+            })
+            ->select(DB::raw('MONTHNAME(CONCAT("2000-", months.month, "-01")) as month_name'), DB::raw('COUNT(users.id) as total'))
+            ->groupBy('months.month')
+            ->orderBy('months.month')
+            ->get();
 
         $data = [];
         $data['food_request_count'] = $food_request_count;
         $data['food_donate_count'] = $food_donate_count;
         $data['food_accepted_count'] = $food_accepted_count;
         $data['food_records'] = $food_records;
+        $data['user_graph'] = $userCounts;
 
         return response([
             'status' => '200',
