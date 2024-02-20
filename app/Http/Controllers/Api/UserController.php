@@ -179,12 +179,35 @@ class UserController extends Controller
             ->orderBy('months.month')
             ->get();
 
+        $year = date('Y');
+
+        // Generate an array of all months in the year
+        $months = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $months[] = $month;
+        }
+        
+        $foodCounts = DB::table(DB::raw('(SELECT '. implode(' as month UNION ALL SELECT ', $months) . ' as month) months'))
+            ->leftJoin('foods', function($join) use ($year) {
+                $join->on(DB::raw('MONTH(foods.created_at)'), '=', 'months.month')
+                    ->whereYear('foods.created_at', $year);
+            })
+            ->select(
+                DB::raw('MONTHNAME(CONCAT("2000-", months.month, "-01")) as month_name'),
+                DB::raw('SUM(CASE WHEN foods.type = "donate" THEN 1 ELSE 0 END) as total_donation'),
+                DB::raw('SUM(CASE WHEN foods.type = "request" THEN 1 ELSE 0 END) as total_request')
+            )
+            ->groupBy('months.month')
+            ->orderBy('months.month')
+            ->get();
+
         $data = [];
         $data['food_request_count'] = $food_request_count;
         $data['food_donate_count'] = $food_donate_count;
         $data['food_accepted_count'] = $food_accepted_count;
         $data['food_records'] = $food_records;
         $data['user_graph'] = $userCounts;
+        $data['food_graph'] = $foodCounts;
 
         return response([
             'status' => '200',
