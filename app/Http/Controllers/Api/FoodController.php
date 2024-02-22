@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Food;
 use DB;
+use App\Events\NoticationEvent;
 
 class FoodController extends Controller
 {
@@ -102,6 +103,7 @@ class FoodController extends Controller
         }else{
             $message = 'Food Request Added Sucessfully';
         }
+        event(new NoticationEvent('hello world'));
 
         return response([
             'status' => 200,
@@ -125,6 +127,7 @@ class FoodController extends Controller
         $food->location = $request->location;
         $food->expired = 0;
         $food->save();
+        event(new NoticationEvent('hello world'));
 
         return response([
             'status' => 200,
@@ -178,6 +181,7 @@ class FoodController extends Controller
         $food->location = $request->location;
         $food->expired = 0;
         $food->save();
+        event(new NoticationEvent('hello world'));
 
         return response([
             'status' => 200,
@@ -207,6 +211,8 @@ class FoodController extends Controller
         $food->location = $request->location;
         $food->expired = 0;
         $food->save();
+
+        event(new NoticationEvent('hello world'));
 
         return response([
             'status' => 200,
