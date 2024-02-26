@@ -187,6 +187,20 @@ class UserController extends Controller
             $months[] = $month;
         }
         
+        // $foodCounts = DB::table(DB::raw('(SELECT '. implode(' as month UNION ALL SELECT ', $months) . ' as month) months'))
+        //     ->leftJoin('foods', function($join) use ($year) {
+        //         $join->on(DB::raw('MONTH(foods.created_at)'), '=', 'months.month')
+        //             ->whereYear('foods.created_at', $year);
+        //     })
+        //     ->select(
+        //         DB::raw('MONTHNAME(CONCAT("2000-", months.month, "-01")) as month_name'),
+        //         DB::raw('SUM(CASE WHEN foods.type = "donate" THEN 1 ELSE 0 END) as total_donation'),
+        //         DB::raw('SUM(CASE WHEN foods.type = "request" THEN 1 ELSE 0 END) as total_request')
+        //     )
+        //     ->groupBy('months.month')
+        //     ->orderBy('months.month')
+        //     ->get();
+
         $foodCounts = DB::table(DB::raw('(SELECT '. implode(' as month UNION ALL SELECT ', $months) . ' as month) months'))
         ->leftJoin('foods', function($join) use ($year) {
             $join->on(DB::raw('MONTH(foods.created_at)'), '=', 'months.month')
@@ -200,8 +214,6 @@ class UserController extends Controller
         ->groupBy('months.month')
         ->orderBy('months.month')
         ->get();
-    
-    // $foodCounts now contains total_donation and total_request as integers
 
         $data = [];
         $data['food_request_count'] = $food_request_count;
