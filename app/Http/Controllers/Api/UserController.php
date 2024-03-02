@@ -55,6 +55,7 @@ class UserController extends Controller
         $users->dob = date('Y-m-d', strtotime($request->dob));
         $users->contact_no = $request->contact_no;
         $users->gender = $request->gender;
+        $users->address = $request->address;
         $users->save();
 
         return response([

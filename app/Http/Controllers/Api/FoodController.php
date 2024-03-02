@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Food;
+use App\Models\FoodPics;
 use DB;
 use App\Events\NoticationEvent;
 
@@ -20,9 +21,10 @@ class FoodController extends Controller
     }
 
     public function get_food_waste_history(){
-        $foods = Food::select('foods.type', 'foods.title', 'foods.text', 'foods.quantity', 'foods.location', 'foods.expired', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_name"), DB::raw("CONCAT(acceptors.first_name, ' ', acceptors.last_name) AS accept_name"))
+        $foods = Food::select('foods.id', 'foods.type', 'foods.title', 'foods.text', 'foods.quantity', 'foods.location', 'foods.expired', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_name"), DB::raw("CONCAT(acceptors.first_name, ' ', acceptors.last_name) AS accept_name"))
             ->leftJoin('users', 'foods.user_id', '=', 'users.id')
             ->leftJoin('users as acceptors', 'foods.accept_id', '=', 'acceptors.id')
+            ->with('pics')
             ->get();
 
 
@@ -38,6 +40,7 @@ class FoodController extends Controller
             ->leftJoin('users', 'foods.user_id', '=', 'users.id')
             ->leftJoin('users as acceptors', 'foods.accept_id', '=', 'acceptors.id')
             ->where('type', 'request')
+            ->with('pics')
             ->get();
 
 
@@ -53,6 +56,7 @@ class FoodController extends Controller
             ->leftJoin('users', 'foods.user_id', '=', 'users.id')
             ->leftJoin('users as acceptors', 'foods.accept_id', '=', 'acceptors.id')
             ->where('type', 'donate')
+            ->with('pics')
             ->get();
 
         return response([
@@ -66,6 +70,7 @@ class FoodController extends Controller
         $foods = Food::select('foods.type', 'foods.title', 'foods.text', 'foods.quantity', 'foods.location', 'foods.expired', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_name"), DB::raw("CONCAT(acceptors.first_name, ' ', acceptors.last_name) AS accept_name"))
             ->leftJoin('users', 'foods.user_id', '=', 'users.id')
             ->leftJoin('users as acceptors', 'foods.accept_id', '=', 'acceptors.id')
+            ->with('pics')
             ->get();
 
         return response([
@@ -89,6 +94,7 @@ class FoodController extends Controller
         }else{
             $food = new Food;
         }
+
         $food->user_id = $request->user_id;
         $food->title = $request->title;
         $food->type = $request->type;
@@ -97,6 +103,25 @@ class FoodController extends Controller
         $food->location = $request->location;
         $food->expired = 0;
         $food->save();
+
+        $fileName = '';
+        if ($request->hasFile('pic')) {
+            $food->pics()->delete();
+            $files = $request->pic;
+            if(!empty($files) && is_array($files) && count($files) > 0){
+                foreach($files as $file){
+                    $destinationPath = public_path() . '/foods/';
+                    $fileName = time() . '.' . $file->extension();
+                    $file->move($destinationPath, $fileName);
+                    $food_pic = new FoodPics();
+                    $food_pic->user_id = $request->user_id;
+                    $food_pic->food_id = $food->id;
+                    $food_pic->name = $fileName;
+                    $food_pic->path = $fileName;
+                    $food_pic->save();
+                }
+            }
+        }
 
         if($request->type == 'donate'){
             $message = 'Food Donate Added Sucessfully';
@@ -149,7 +174,7 @@ class FoodController extends Controller
      */
     public function show(string $id)
     {
-        $food = Food::with('user')->find($id);
+        $food = Food::with('user')->with('pics')->find($id);
         if(empty($food)){
             return response([
                 'status' => '400',
