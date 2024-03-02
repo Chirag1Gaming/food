@@ -140,7 +140,7 @@ class UserController extends Controller
         $food_request_count = Food::where('user_id', $id)->where('type', 'request')->count();
         $food_donate_count = Food::where('user_id', $id)->where('type', 'donate')->count();
         $food_accepted_count = Food::where('user_id', $id)->where('accept_id', '!=', null)->count();
-        $food_records = Food::where('user_id', $id)->take(3)->get();
+        $food_records = Food::where('user_id', $id)->with('pics')->take(3)->orderby('id', 'DESC')->get();
 
         $data = [];
         $data['user'] = $user;
@@ -160,7 +160,7 @@ class UserController extends Controller
         $food_request_count = Food::where('type', 'request')->count();
         $food_donate_count = Food::where('type', 'donate')->count();
         $food_accepted_count = Food::where('accept_id', '!=', null)->count();
-        $food_records = Food::limit('3')->get();
+        $food_records = Food::with('pics')->limit('3')->orderby('id', 'DESC')->get();
 
         $year = date('Y');
 
