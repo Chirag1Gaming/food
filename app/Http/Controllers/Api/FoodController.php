@@ -123,12 +123,15 @@ class FoodController extends Controller
             }
         }
 
+        $notification_message = '';
         if($request->type == 'donate'){
             $message = 'Food Donate Added Sucessfully';
+            $notification_message = "Food Donation is added.";
         }else{
             $message = 'Food Request Added Sucessfully';
+            $notification_message = "Food Request is added.";
         }
-        event(new NoticationEvent('hello world'));
+        event(new NoticationEvent($notification_message));
 
         return response([
             'status' => 200,
@@ -152,7 +155,8 @@ class FoodController extends Controller
         $food->location = $request->location;
         $food->expired = 0;
         $food->save();
-        event(new NoticationEvent('hello world'));
+        $notification_message = "Food Request is added.";
+        event(new NoticationEvent($notification_message));
 
         return response([
             'status' => 200,
@@ -206,7 +210,8 @@ class FoodController extends Controller
         $food->location = $request->location;
         $food->expired = 0;
         $food->save();
-        event(new NoticationEvent('hello world'));
+        $notification_message = "Food Donate is added.";
+        event(new NoticationEvent($notification_message));
 
         return response([
             'status' => 200,
@@ -237,7 +242,8 @@ class FoodController extends Controller
         $food->expired = 0;
         $food->save();
 
-        event(new NoticationEvent('hello world'));
+        $notification_message = "Food Request is added.";
+        event(new NoticationEvent($notification_message));
 
         return response([
             'status' => 200,
