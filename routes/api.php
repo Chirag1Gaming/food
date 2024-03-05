@@ -37,6 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::any('/update_profile', [UserController::class, 'update_profile']);
     Route::any('/get_user_list', [UsersController::class, 'index'])->name('get_user_list');
     Route::any('/get_food_request_list', [FoodController::class, 'get_food_request_list']);
+    Route::any('/get_my_food_request_list/{user_id}', [FoodController::class, 'get_my_food_request_list']);
     Route::any('/create_food_request', [FoodController::class, 'create']);
     Route::any('/edit_food_request/{id}', [FoodController::class, 'edit']);
     Route::any('/delete_food_request/{id}', [FoodController::class, 'destroy']);
