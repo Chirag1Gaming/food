@@ -32,7 +32,7 @@ Route::post('/reset-password/{token}', [PasswordResetController::class, 'reset']
 // protected route
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [RegisterController::class, 'logout'])->name('logout');
-    Route::any('/get_user', [UserController::class, 'show']);
+    Route::any('/get_user/{id}', [UserController::class, 'show']);
     Route::any('/update_profile/{id}', [UserController::class, 'update']);
     Route::any('/update_profile', [UserController::class, 'update_profile']);
     Route::any('/get_user_list', [UsersController::class, 'index'])->name('get_user_list');
