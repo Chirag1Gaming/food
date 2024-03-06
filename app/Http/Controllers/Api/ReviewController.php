@@ -129,7 +129,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function approveReview(Request $request){
+    public function approveReview($id, Request $request){
         $review = Review::find($id);
 
         if(empty($review)){
@@ -149,7 +149,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function rejectReview(Request $request){
+    public function rejectReview($id, Request $request){
         $review = Review::find($id);
 
         if(empty($review)){

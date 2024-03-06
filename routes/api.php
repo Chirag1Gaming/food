@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\FoodController;
+use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
 /*
@@ -55,6 +56,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::any('/user_dashboard/{id}', [UsersController::class, 'user_dashboard']);
     Route::any('/admin_dashboard', [UsersController::class, 'admin_dashboard']);
+
+    Route::any('/review_list', [ReviewController::class, 'index']);
+    Route::any('/add_edit_review', [ReviewController::class, 'store']);
+    Route::any('/show_review/{id}', [ReviewController::class, 'show']);
+    Route::any('/delete_review/{id}', [ReviewController::class, 'destroy']);
+    Route::any('/approve_review/{id}', [ReviewController::class, 'approveReview']);
+    Route::any('/reject_review/{id}', [ReviewController::class, 'rejectReview']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
