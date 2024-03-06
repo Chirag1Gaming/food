@@ -49,15 +49,15 @@
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link text-dark" href="{{ (url()->current() == url('login') || url()->current() == url('register')) ? route('login') : url('admin_login') }}">{{ __('Login') }}</a>
-                                </li>
+                                </li> -->
                             @endif
 
                             @if (Route::has('register'))
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link text-dark" href="{{ (url()->current() == url('login') || url()->current() == url('register')) ? route('register') : url('admin_register') }}">{{ __('Register') }}</a>
-                                </li>
+                                </li> -->
                             @endif
                         @else
                             <li class="nav-item dropdown">
